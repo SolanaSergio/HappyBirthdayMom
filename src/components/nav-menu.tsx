@@ -1,63 +1,90 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Upload, Home, Menu } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function NavMenu() {
   const pathname = usePathname();
-  const [showMenu, setShowMenu] = useState(false);
+  const isAdminPage = pathname === "/admin";
 
   return (
     <>
-      {/* Mobile menu toggle button */}
-      <button
-        onClick={() => setShowMenu(!showMenu)}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white/90 rounded-full shadow-md"
-        aria-label="Toggle menu"
-      >
-        <Menu className="h-5 w-5 text-pink-600" />
-      </button>
+      {/* Mobile menu with sheet */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <button
+            className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white/90 rounded-full shadow-md"
+            aria-label="Menu"
+          >
+            <Menu className="h-5 w-5 text-pink-600" />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="right" className="w-[280px] bg-white/95 backdrop-blur-sm">
+          <SheetHeader>
+            <SheetTitle className="text-pink-600">Menú</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-2 mt-6">
+            {isAdminPage ? (
+              <Link href="/">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="w-full justify-start text-pink-800 hover:text-pink-900 hover:bg-pink-50"
+                >
+                  Volver a Inicio
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="w-full justify-start text-pink-800 hover:text-pink-900 hover:bg-pink-50"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Administrar Contenido
+                </Button>
+              </Link>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* Nav menu - responsive */}
-      <nav className={`fixed ${showMenu ? 'top-0 right-0 h-auto py-16 px-6 bg-white/95 shadow-lg rounded-bl-xl' : 'top-4 right-4'} z-40 flex flex-col md:flex-row gap-2 transition-all duration-300 md:bg-transparent md:shadow-none md:p-0`}>
-        {pathname !== "/" && (
-          <Link href="/" onClick={() => setShowMenu(false)}>
+      {/* Desktop menu */}
+      <div className="hidden md:block fixed top-4 right-4 z-50">
+        {isAdminPage ? (
+          <Link href="/">
             <Button
               variant="outline"
               size="sm"
-              className="bg-white/90 backdrop-blur-sm border-pink-200 hover:bg-pink-50 w-full md:w-auto"
+              className="bg-white/90 backdrop-blur-sm border-pink-200 hover:bg-pink-50"
             >
-              <Home className="h-4 w-4 mr-2 text-pink-500" />
-              <span className="text-pink-800">Inicio</span>
+              Volver a Inicio
             </Button>
           </Link>
-        )}
-
-        {pathname !== "/uploads" && (
-          <Link href="/uploads" onClick={() => setShowMenu(false)}>
+        ) : (
+          <Link href="/admin">
             <Button
               variant="outline"
               size="sm"
-              className="bg-white/90 backdrop-blur-sm border-pink-200 hover:bg-pink-50 w-full md:w-auto"
+              className="bg-white/90 backdrop-blur-sm border-pink-200 hover:bg-pink-50"
             >
-              <Upload className="h-4 w-4 mr-2 text-pink-500" />
-              <span className="text-pink-800">Subir Recuerdos</span>
+              <Settings className="h-4 w-4 mr-2" />
+              Administrar
             </Button>
           </Link>
         )}
-      </nav>
-
-      {/* Backdrop for mobile */}
-      {showMenu && (
-        <div
-          className="fixed inset-0 bg-black/20 z-30 md:hidden"
-          onClick={() => setShowMenu(false)}
-          aria-hidden="true"
-        />
-      )}
+      </div>
     </>
   );
 }

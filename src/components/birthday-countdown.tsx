@@ -9,26 +9,31 @@ import confetti from "canvas-confetti";
 const getTimeRemaining = (birthdayMonth: number, birthdayDay: number) => {
   const now = new Date();
   const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
+  const currentDay = now.getDate();
 
-  // Set this year's birthday
-  let birthdayDate = new Date(currentYear, birthdayMonth - 1, birthdayDay);
-
-  // If birthday has already passed this year, use next year's date
-  if (now > birthdayDate) {
-    birthdayDate = new Date(currentYear + 1, birthdayMonth - 1, birthdayDay);
-  }
-
-  // Calculate time remaining
-  const totalSeconds = Math.floor((birthdayDate.getTime() - now.getTime()) / 1000);
-
-  // Return true if it's birthday today
-  if (
-    now.getDate() === birthdayDay &&
-    now.getMonth() === birthdayMonth - 1
-  ) {
+  // Check if today is the birthday
+  if (currentMonth === birthdayMonth && currentDay === birthdayDay) {
     return { isBirthday: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
 
+  // Calculate next birthday year
+  let nextBirthdayYear = currentYear;
+  
+  // If we've already passed this year's birthday, use next year
+  if (
+    currentMonth > birthdayMonth || 
+    (currentMonth === birthdayMonth && currentDay > birthdayDay)
+  ) {
+    nextBirthdayYear = currentYear + 1;
+  }
+
+  // Set next birthday date at midnight
+  const nextBirthday = new Date(nextBirthdayYear, birthdayMonth - 1, birthdayDay, 0, 0, 0, 0);
+  const nowTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), 0);
+  
+  // Calculate time remaining
+  const totalSeconds = Math.floor((nextBirthday.getTime() - nowTime.getTime()) / 1000);
   const days = Math.floor(totalSeconds / (60 * 60 * 24));
   const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
   const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
@@ -45,8 +50,8 @@ const getTimeRemaining = (birthdayMonth: number, birthdayDay: number) => {
 
 export default function BirthdayCountdown() {
   // Customize with your mom's birthday (month, day)
-  const birthdayMonth = 5; // May
-  const birthdayDay = 10;
+  const birthdayMonth = 3; // March
+  const birthdayDay = 21;
 
   // Initialize with dummy values to prevent hydration errors
   const [timeRemaining, setTimeRemaining] = useState({

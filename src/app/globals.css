@@ -203,6 +203,22 @@
   }
 }
 
+/* Music visualizer animations */
+@keyframes music1 {
+  0%, 100% { height: 12px; }
+  50% { height: 4px; }
+}
+
+@keyframes music2 {
+  0%, 100% { height: 16px; }
+  50% { height: 6px; }
+}
+
+@keyframes music3 {
+  0%, 100% { height: 8px; }
+  50% { height: 14px; }
+}
+
 .animate-heartbeat {
   animation: heartbeat 1.5s infinite ease-in-out;
 }
